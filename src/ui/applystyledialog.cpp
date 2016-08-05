@@ -50,6 +50,7 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
 			this->reject();
             return true;
 		} else {
+            ui->label->setText(ui->lineEdit->text());
             return false;
         }
     } else {

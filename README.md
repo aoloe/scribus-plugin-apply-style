@@ -32,3 +32,4 @@ Scribus plugin for applying a style through a small in-place dialog.
 
 - avox says: "if you know the character position, you can use class TextLayout to find the relative position in the frame"
 - the code around line 1882 in `pageitem_textframe.cpp` could also be interesting
+- fuzzy autocomplete: <https://github.com/FuzzyAutocomplete/FuzzyAutocompletePlugin>
