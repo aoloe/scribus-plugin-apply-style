@@ -103,8 +103,10 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
     ApplyStyleSelection selection = applystyle->getSelection();
     if (selection.textFrame)
     {
+        qDebug() << "i'm a text frame";
         // ApplyStyleDialog *dialog = new ApplyStyleDialog(currDoc->scMW(), currDoc, "dlg", true, 0);
         ApplyStyleDialog *dialog = new ApplyStyleDialog(currDoc->scMW());
+        dialog->exec();
     }
     // TODO:
     // - get the list of styles

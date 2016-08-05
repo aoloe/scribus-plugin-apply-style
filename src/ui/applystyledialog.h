@@ -15,6 +15,8 @@ public:
     explicit ApplyStyleDialog(QWidget *parent = 0);
     ~ApplyStyleDialog();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev);
 private:
     Ui::ApplyStyleDialog *ui;
 };
