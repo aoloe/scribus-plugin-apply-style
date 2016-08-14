@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QVector>
 
-class ScribusDoc;
+#include "plugins/scribusAPI/scribusAPIDocument.h"
 class ApplyStyleSelection;
 
 /**
@@ -19,14 +19,14 @@ class ApplyStyle : public QObject
     Q_OBJECT
 
 public:
-	ApplyStyle();
-	~ApplyStyle();
+	ApplyStyle(ScribusAPIDocument* document)
+    : document{document}
+    {}
+	~ApplyStyle() {}
 
-    void setScribusDocument(ScribusDoc* scribusDoc) { this->scribusDoc = scribusDoc; }
-
-    ApplyStyleSelection getSelection();
+    ApplyStyleSelection* getSelection();
 private:
-    ScribusDoc* scribusDoc;
+    ScribusAPIDocument* document;
 
 };
 

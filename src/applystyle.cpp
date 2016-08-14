@@ -5,29 +5,18 @@
 
 #include "module/applystyleselection.h"
 
-#include "plugins/scribusAPI/scribusAPI.h"
 #include "plugins/scribusAPI/scribusAPIDocument.h"
 #include "plugins/scribusAPI/scribusAPIDocumentItem.h"
 #include "plugins/scribusAPI/scribusAPIDocumentItemText.h"
 // #include "plugins/scribusAPI/scribusAPIDocumentItemTextFormatting.h"
 
-ApplyStyle::ApplyStyle()
+ApplyStyleSelection* ApplyStyle::getSelection()
 {
-}
+	ScribusAPIDocumentItem* tocFrame = document->getCurrentItem();
 
-ApplyStyle::~ApplyStyle()
-{
-}
-
-ApplyStyleSelection ApplyStyle::getSelection()
-{
-    ScribusAPIDocument* scribusDocument = new ScribusAPIDocument(this->scribusDoc);
-
-	ScribusAPIDocumentItem* tocFrame = scribusDocument->getCurrentItem();
-
-    ApplyStyleSelection selection;
-	selection.textFrame = tocFrame &&  tocFrame->isTextFrame();
-    if (!selection.textFrame)
+    ApplyStyleSelection* selection = new ApplyStyleSelection();
+	selection->textFrame = tocFrame &&  tocFrame->isTextFrame();
+    if (!selection->textFrame)
         return selection;
     // bool editMode;
     return selection;

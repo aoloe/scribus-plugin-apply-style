@@ -9,6 +9,8 @@
 #include "module/applystyleselection.h"
 #include "ui/applystyledialog.h"
 
+#include "plugins/scribusAPI/scribusAPIDocument.h"
+
 int applystyleplugin_getPluginAPIVersion()
 {
 	return PLUGIN_API_VERSION;
@@ -96,17 +98,18 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
 	if (currDoc == 0)
 		return false;
 
-    qDebug() << "apply a style";
-	ApplyStyle *applystyle = new ApplyStyle();
+    ScribusAPIDocument* scribusDocument = new ScribusAPIDocument(currDoc);
 
-	applystyle->setScribusDocument(currDoc);
-    ApplyStyleSelection selection = applystyle->getSelection();
-    if (selection.textFrame)
+	ApplyStyle *applystyle = new ApplyStyle(scribusDocument);
+
+    ApplyStyleSelection* selection = applystyle->getSelection();
+    if (selection->textFrame)
     {
         qDebug() << "i'm a text frame";
-        // ApplyStyleDialog *dialog = new ApplyStyleDialog(currDoc->scMW(), currDoc, "dlg", true, 0);
-        ApplyStyleDialog *dialog = new ApplyStyleDialog(currDoc->scMW());
-        dialog->exec();
+        ApplyStyleDialog *dialog = new ApplyStyleDialog(currDoc->scMW(), scribusDocument);
+        dialog->setModal(true);
+        dialog->show();
+        // dialog->exec();
     }
     // TODO:
     // - get the list of styles

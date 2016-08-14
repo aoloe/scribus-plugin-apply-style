@@ -33,3 +33,8 @@ Scribus plugin for applying a style through a small in-place dialog.
 - avox says: "if you know the character position, you can use class TextLayout to find the relative position in the frame"
 - the code around line 1882 in `pageitem_textframe.cpp` could also be interesting
 - fuzzy autocomplete: <https://github.com/FuzzyAutocomplete/FuzzyAutocompletePlugin>
+- Maybe create a general runner:
+  - Only a label, no lineedit
+  - No mouse support (we might have a second one mouse based)
+  - Multi stage fast actions (run, rotate, step (1, 10, 15, ...), ← →); with hints on what is available.
+  - Placed at "standard" places (home, end, page up, page down for edges and center (  (home when already at home moves to the center); next launch at the precedent place.

@@ -4,13 +4,40 @@
 #include<QDebug>
 #include<QEvent>
 #include<QKeyEvent>
+#include<QStringList>
+#include<QString>
 
-ApplyStyleDialog::ApplyStyleDialog(QWidget *parent) :
+#include "plugins/scribusAPI/scribusAPIDocument.h"
+
+ApplyStyleDialog::ApplyStyleDialog(QWidget *parent, ScribusAPIDocument* document) :
     QDialog(parent),
-    ui(new Ui::ApplyStyleDialog)
+    ui(new Ui::ApplyStyleDialog),
+    document(document)
 {
+    QStringList paragraphStyles = document->getParagraphStyleNames();
+    qDebug() << paragraphStyles;
+    QStringList characterStyles = document->getCharacterStyleNames();
+    qDebug() << characterStyles;
+    QString labelText;
+    if (!paragraphStyles.empty())
+    {
+        labelText = "¶ " + paragraphStyles.join(" ¶ ");
+    }
+    if (!characterStyles.empty())
+    {
+        if (labelText != "")
+        {
+            labelText += " ";
+        }
+        labelText += "T " + characterStyles.join(" T ");
+    }
+    qDebug() << labelText;
     ui->setupUi(this);
+    // close if click outside of the dialog
+    // setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
 	ui->lineEdit->installEventFilter(this);
+    ui->label->setText(labelText);
+	installEventFilter(this);
 }
 
 ApplyStyleDialog::~ApplyStyleDialog()
@@ -44,17 +71,17 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
                 return true;
             } else {
                 qDebug() << "Ate key press" << keyEvent->key();
+                ui->label->setText(ui->lineEdit->text());
                 return false;
             }
-        } else if (event->type() == QEvent::MouseButtonRelease) {
-			this->reject();
-            return true;
 		} else {
-            ui->label->setText(ui->lineEdit->text());
             return false;
         }
-    } else {
-        // pass the event on to the parent class
-        return QDialog::eventFilter(obj, event);
+    } else if (obj == this) {
+        if (event->type() == QEvent::MouseButtonRelease) {
+			this->reject();
+            return true;
+        }
     }
+    return false;
 }
