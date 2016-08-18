@@ -24,8 +24,6 @@ Scribus plugin for applying a style through a small in-place dialog.
 
 ## Todo
 
-- Automatically highlight (bold) the first entry.
-- Loop through the entries with the tab key.
 - Apply the style when Enter is pressed.
 
 Further ideas:

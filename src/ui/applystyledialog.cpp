@@ -7,7 +7,7 @@
 #include<QKeyEvent>
 #include<QStringList>
 #include<QString>
-#include<QRegExp>
+#include<QRegularExpression>
 
 #include "plugins/scribusAPI/scribusAPIDocument.h"
 
@@ -16,14 +16,22 @@ ApplyStyleDialog::ApplyStyleDialog(QWidget *parent, ScribusAPIDocument* document
     ui(new Ui::ApplyStyleDialog),
     document(document)
 {
-    paragraphStyles = document->getParagraphStyleNames();
+    foreach (QString styleName, document->getParagraphStyleNames())
+    {
+        styles.append(ApplyStyleDialogListItem("paragraph", styleName));
+    }
+    // paragraphStyles = document->getParagraphStyleNames();
     // qDebug() << paragraphStyles;
-    characterStyles = document->getCharacterStyleNames();
+    foreach (QString styleName, document->getCharacterStyleNames())
+    {
+        styles.append(ApplyStyleDialogListItem("character", styleName));
+    }
+    // characterStyles = document->getCharacterStyleNames();
     // qDebug() << characterStyles;
 
     ui->setupUi(this);
 
-    initLabel();
+    updateLabel();
 	ui->lineEdit->installEventFilter(this);
 	installEventFilter(this);
     connect(ui->lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(updateLabel(const QString&)));
@@ -34,15 +42,6 @@ ApplyStyleDialog::~ApplyStyleDialog()
 {
     delete ui;
 }
-
-/*
-void ApplyStyleDialog::keyPressEvent(QKeyEvent *evt)
-{
-    if(evt->key() == Qt::Key_Enter || evt->key() == Qt::Key_Return)
-		evt->accept();
-    QDialog::keyPressEvent(evt);
-}
-*/
 
 /**
  * @brief capture return, esc, and tab and mouse clicks
@@ -59,13 +58,19 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
                 this->reject();
                 return true;
             } else if (keyEvent->key() == Qt::Key_Tab) {
-                qDebug() << "Tab key press" << keyEvent->key();
+                // qDebug() << "Tab key press" << keyEvent->key();
+                if (currentStyleSelected < styles.size() - 1)
+                    ++currentStyleSelected;
+                else
+                    currentStyleSelected = 0;
+                updateLabel();
                 return true;
             } else {
                 /*
                 qDebug() << "A key press" << keyEvent->key();
                 qDebug() << "A key press" << keyEvent->text();
                 */
+                currentStyleSelected = 0;
                 return false;
             }
 		} else {
@@ -82,33 +87,39 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
 
 QString ApplyStyleDialog::getStylesFiltered(const QString filterText)
 {
-    QString styles = "";
+    QStringList styleNamesSelected;
+    stylesSelected.clear();
 
-	QRegExp rx(filterText, Qt::CaseInsensitive);
+    // todo: probably we have to escape filterText:
+    // QRegExp::escape(filterText);
+	QRegularExpression re(filterText, QRegularExpression::CaseInsensitiveOption);
 
-    // QStringList pSelected = filterText.isEmpty() ? paragraphStyles : paragraphStyles.filter(rx);
-    // QStringList cSelected = filterText.isEmpty() ? characterStyles : characterStyles.filter(rx);
-    QStringList pSelected = paragraphStyles.filter(rx);
-    QStringList cSelected = characterStyles.filter(rx);
-
-    if (!pSelected.empty())
+    int i = 0;
+    foreach (ApplyStyleDialogListItem style, styles)
     {
-        styles += "¶ " + pSelected.join(" ¶ ") + " ";
+        QRegularExpressionMatch match = re.match(style.name);
+        if (match.hasMatch())
+        {
+            QString item;
+            item += style.name;
+            if (i == currentStyleSelected)
+                item = "<b>"+item+"</b>";
+            item = (style.type == "paragraph" ? "¶ " : "T ") + item;
+            styleNamesSelected.append(item);
+            stylesSelected.append(style);
+            ++i;
+        }
     }
-    if (!cSelected.empty())
-    {
-        styles += "T " + cSelected.join(" T ");
-    }
-    return styles;
+
+    return styleNamesSelected.join(" ");
+}
+
+void ApplyStyleDialog::updateLabel()
+{
+    updateLabel(ui->lineEdit->text());
 }
 
 void ApplyStyleDialog::updateLabel(const QString& inputText)
 {
     ui->label->setText(getStylesFiltered(inputText));
-}
-
-void ApplyStyleDialog::initLabel()
-{
-
-    ui->label->setText(getStylesFiltered(""));
 }

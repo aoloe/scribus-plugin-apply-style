@@ -5,8 +5,14 @@
 #include <QDialog>
 
 class QString;
-class QStringList;
 class ScribusAPIDocument;
+
+struct ApplyStyleDialogListItem
+{
+    ApplyStyleDialogListItem(QString type, QString name): type{type}, name{name} {}
+    QString type; // todo: use a constant from APIDocumentStyle
+    QString name;
+};
 
 namespace Ui {
 class ApplyStyleDialog;
@@ -25,9 +31,12 @@ protected:
 private:
     Ui::ApplyStyleDialog *ui;
     ScribusAPIDocument* document;
-    QStringList paragraphStyles;
-    QStringList characterStyles;
-    void initLabel();
+    QList<ApplyStyleDialogListItem> styles;
+    QList<ApplyStyleDialogListItem> stylesSelected;
+    int currentStyleSelected = 0;
+    // QStringList paragraphStyles;
+    // QStringList characterStyles;
+    void updateLabel();
     QString getStylesFiltered(const QString filterText);
 private slots:
     void updateLabel(const QString& inputText);
