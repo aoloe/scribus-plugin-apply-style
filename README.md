@@ -24,6 +24,12 @@ Scribus plugin for applying a style through a small in-place dialog.
 
 ## Todo
 
+- Automatically highlight (bold) the first entry.
+- Loop through the entries with the tab key.
+- Apply the style when Enter is pressed.
+
+Further ideas:
+
 - Add an API function to know the position of the cursor in the frame (not the index, the x, y coordinates)
 - Create a dialog that captures the keys but has not input field (if possible).
 - Create a dialog that resizes according to the content (upwards or downwards)

@@ -1,11 +1,13 @@
 #include "applystyledialog.h"
 #include "ui_applystyledialog.h"
 
+#include<QObject>
 #include<QDebug>
 #include<QEvent>
 #include<QKeyEvent>
 #include<QStringList>
 #include<QString>
+#include<QRegExp>
 
 #include "plugins/scribusAPI/scribusAPIDocument.h"
 
@@ -14,30 +16,18 @@ ApplyStyleDialog::ApplyStyleDialog(QWidget *parent, ScribusAPIDocument* document
     ui(new Ui::ApplyStyleDialog),
     document(document)
 {
-    QStringList paragraphStyles = document->getParagraphStyleNames();
-    qDebug() << paragraphStyles;
-    QStringList characterStyles = document->getCharacterStyleNames();
-    qDebug() << characterStyles;
-    QString labelText;
-    if (!paragraphStyles.empty())
-    {
-        labelText = "¶ " + paragraphStyles.join(" ¶ ");
-    }
-    if (!characterStyles.empty())
-    {
-        if (labelText != "")
-        {
-            labelText += " ";
-        }
-        labelText += "T " + characterStyles.join(" T ");
-    }
-    qDebug() << labelText;
+    paragraphStyles = document->getParagraphStyleNames();
+    // qDebug() << paragraphStyles;
+    characterStyles = document->getCharacterStyleNames();
+    // qDebug() << characterStyles;
+
     ui->setupUi(this);
-    // close if click outside of the dialog
-    // setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
+
+    initLabel();
 	ui->lineEdit->installEventFilter(this);
-    ui->label->setText(labelText);
 	installEventFilter(this);
+    connect(ui->lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(updateLabel(const QString&)));
+
 }
 
 ApplyStyleDialog::~ApplyStyleDialog()
@@ -54,7 +44,9 @@ void ApplyStyleDialog::keyPressEvent(QKeyEvent *evt)
 }
 */
 
-
+/**
+ * @brief capture return, esc, and tab and mouse clicks
+ */
 bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui->lineEdit) {
@@ -70,8 +62,10 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
                 qDebug() << "Tab key press" << keyEvent->key();
                 return true;
             } else {
-                qDebug() << "Ate key press" << keyEvent->key();
-                ui->label->setText(ui->lineEdit->text());
+                /*
+                qDebug() << "A key press" << keyEvent->key();
+                qDebug() << "A key press" << keyEvent->text();
+                */
                 return false;
             }
 		} else {
@@ -84,4 +78,37 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
         }
     }
     return false;
+}
+
+QString ApplyStyleDialog::getStylesFiltered(const QString filterText)
+{
+    QString styles = "";
+
+	QRegExp rx(filterText, Qt::CaseInsensitive);
+
+    // QStringList pSelected = filterText.isEmpty() ? paragraphStyles : paragraphStyles.filter(rx);
+    // QStringList cSelected = filterText.isEmpty() ? characterStyles : characterStyles.filter(rx);
+    QStringList pSelected = paragraphStyles.filter(rx);
+    QStringList cSelected = characterStyles.filter(rx);
+
+    if (!pSelected.empty())
+    {
+        styles += "¶ " + pSelected.join(" ¶ ") + " ";
+    }
+    if (!cSelected.empty())
+    {
+        styles += "T " + cSelected.join(" T ");
+    }
+    return styles;
+}
+
+void ApplyStyleDialog::updateLabel(const QString& inputText)
+{
+    ui->label->setText(getStylesFiltered(inputText));
+}
+
+void ApplyStyleDialog::initLabel()
+{
+
+    ui->label->setText(getStylesFiltered(""));
 }

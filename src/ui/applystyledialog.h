@@ -1,8 +1,11 @@
 #ifndef APPLYSTYLEDIALOG_H
 #define APPLYSTYLEDIALOG_H
 
+#include<QObject>
 #include <QDialog>
 
+class QString;
+class QStringList;
 class ScribusAPIDocument;
 
 namespace Ui {
@@ -22,6 +25,12 @@ protected:
 private:
     Ui::ApplyStyleDialog *ui;
     ScribusAPIDocument* document;
+    QStringList paragraphStyles;
+    QStringList characterStyles;
+    void initLabel();
+    QString getStylesFiltered(const QString filterText);
+private slots:
+    void updateLabel(const QString& inputText);
 };
 
 #endif // APPLYSTYLEDIALOG_H
