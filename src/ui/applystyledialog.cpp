@@ -34,13 +34,18 @@ ApplyStyleDialog::ApplyStyleDialog(QWidget *parent, ScribusAPIDocument* document
     updateLabel();
 	ui->lineEdit->installEventFilter(this);
 	installEventFilter(this);
-    connect(ui->lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(updateLabel(const QString&)));
+    connect(ui->lineEdit, &QLineEdit::textChanged, this, static_cast<void (ApplyStyleDialog::*)(const QString &)>(&ApplyStyleDialog::updateLabel));
 
 }
 
 ApplyStyleDialog::~ApplyStyleDialog()
 {
     delete ui;
+}
+
+ApplyStyleDialogListItem ApplyStyleDialog::getStyle()
+{
+    return (stylesSelected.size() > 0 ? stylesSelected.at(currentStyleSelected) : ApplyStyleDialogListItem("", ""));
 }
 
 /**
@@ -52,8 +57,13 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
-                this->accept();
-                return true;
+                if (styles.size() > 0)
+                {
+                    this->accept();
+                    return true;
+                } else {
+                    return false;
+                }
             } else if (keyEvent->key() == Qt::Key_Escape) {
                 this->reject();
                 return true;
@@ -89,26 +99,40 @@ QString ApplyStyleDialog::getStylesFiltered(const QString filterText)
 {
     QStringList styleNamesSelected;
     stylesSelected.clear();
+    QList<ApplyStyleDialogListItem> stylesNotSelected;
 
     // todo: probably we have to escape filterText:
     // QRegExp::escape(filterText);
 	QRegularExpression re(filterText, QRegularExpression::CaseInsensitiveOption);
 
-    int i = 0;
     foreach (ApplyStyleDialogListItem style, styles)
     {
         QRegularExpressionMatch match = re.match(style.name);
         if (match.hasMatch())
-        {
-            QString item;
-            item += style.name;
-            if (i == currentStyleSelected)
-                item = "<b>"+item+"</b>";
-            item = (style.type == "paragraph" ? "¶ " : "T ") + item;
-            styleNamesSelected.append(item);
             stylesSelected.append(style);
-            ++i;
-        }
+        else
+            stylesNotSelected.append(style);
+    }
+
+    // Find the word boundaries matching each letter in the filter
+	QRegularExpression reWords(filterText, QRegularExpression::CaseInsensitiveOption);
+
+    // TODO: disable the apply button if no style selected
+    // TODO: separate the creation of the string list from the selection of the styles
+
+    // TODO: sort alphabetically the stylesSelected
+
+    int i = 0;
+    foreach (ApplyStyleDialogListItem style, stylesSelected)
+    {
+        QString item;
+        item += style.name;
+        if (i == currentStyleSelected)
+            item = "<b>"+item+"</b>";
+        item = (style.type == "paragraph" ? "¶ " : "T ") + item;
+        styleNamesSelected.append(item);
+        stylesSelected.append(style);
+        ++i;
     }
 
     return styleNamesSelected.join(" ");

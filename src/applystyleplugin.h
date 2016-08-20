@@ -13,6 +13,8 @@ class QString;
 class ScribusDoc;
 class ScribusMainWindow;
 
+#include "ui/applystyledialog.h" // for ApplyStyleDialogListItem
+
 /**
  * This is the standard entry point for the plugin and is automatically loaded by Scribus.
  * @brief Standard entry point for the plugin; Attaches itself to the menu, shows the "Settings" dialog and calls `ApplyStyle::doInsert()`
@@ -37,6 +39,9 @@ public:
 	virtual void deleteAboutData(const AboutData* about) const;
 	virtual void languageChange();
 	virtual void addToMainWindowMenu(ScribusMainWindow *) {};
+
+private slots:
+	void applyStyle(ApplyStyleDialogListItem style);
 };
 
 extern "C" PLUGIN_API int applystyleplugin_getPluginAPIVersion();

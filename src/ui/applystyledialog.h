@@ -25,6 +25,7 @@ class ApplyStyleDialog : public QDialog
 public:
     explicit ApplyStyleDialog(QWidget *parent, ScribusAPIDocument* document);
     ~ApplyStyleDialog();
+    ApplyStyleDialogListItem getStyle();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);

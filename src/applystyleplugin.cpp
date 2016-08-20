@@ -83,10 +83,7 @@ void ApplyStylePlugin::deleteAboutData(const AboutData* about) const
 /**
  * This method is automatically called by Scribus when the plugin action is activated.
  *
- * If a document is open, show the export dialog and call `ApplyStyle::doExport()`.
- *
- * @todo:
- * - do not show the dialog if Scribus runs in "server" mode.
+ * If a document is open, check if a text frame is selected, call the style picker and apply the chosen style.
  */
 bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
 {
@@ -105,21 +102,24 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
     ApplyStyleSelection* selection = applystyle->getSelection();
     if (selection->textFrame)
     {
-        qDebug() << "i'm a text frame";
         ApplyStyleDialog *dialog = new ApplyStyleDialog(currDoc->scMW(), scribusDocument);
+        connect(dialog, &ApplyStyleDialog::accepted, [this, dialog]() {
+              this->applyStyle(dialog->getStyle());
+        });
         dialog->setModal(true);
         dialog->show();
+        // we cannot use exec() because it does not autofocus on the edit field
         // dialog->exec();
     }
     // TODO:
-    // - get the list of styles
     // - get the cursor position on the screen
-    // - show the dialog and let the user choose a style
     // - apply the style
-    // EpubExportDialog *dialog = new EpubExportDialog(currDoc->scMW());
-	// applystyle->setOptions(options);
     bool success = true;
-	// bool success = applystyle->doAppend();
 	delete applystyle;
 	return success;
+}
+
+void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
+{
+    qDebug() << style.name;
 }
