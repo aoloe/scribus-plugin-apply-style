@@ -42,6 +42,8 @@ public:
 
 private slots:
 	void applyStyle(ApplyStyleDialogListItem style);
+private:
+    ScribusAPIDocument* scribusDocument;
 };
 
 extern "C" PLUGIN_API int applystyleplugin_getPluginAPIVersion();

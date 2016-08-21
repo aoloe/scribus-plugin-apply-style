@@ -10,6 +10,8 @@
 #include "ui/applystyledialog.h"
 
 #include "plugins/scribusAPI/scribusAPIDocument.h"
+#include "plugins/scribusAPI/scribusAPIDocumentItem.h"
+#include "plugins/scribusAPI/scribusAPIDocumentItemText.h"
 
 int applystyleplugin_getPluginAPIVersion()
 {
@@ -88,14 +90,14 @@ void ApplyStylePlugin::deleteAboutData(const AboutData* about) const
 bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
 {
 
-	Q_ASSERT(target.isNull());
-	ScribusDoc* currDoc=doc;
-	if (currDoc == 0)
-		currDoc = ScCore->primaryMainWindow()->doc;
-	if (currDoc == 0)
-		return false;
+    Q_ASSERT(target.isNull());
+    ScribusDoc* currDoc = doc;
+    if (currDoc == 0)
+        currDoc = ScCore->primaryMainWindow()->doc;
+    if (currDoc == 0)
+        return false;
 
-    ScribusAPIDocument* scribusDocument = new ScribusAPIDocument(currDoc);
+    scribusDocument = new ScribusAPIDocument(currDoc);
 
 	ApplyStyle *applystyle = new ApplyStyle(scribusDocument);
 
@@ -111,15 +113,21 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
         // we cannot use exec() because it does not autofocus on the edit field
         // dialog->exec();
     }
-    // TODO:
-    // - get the cursor position on the screen
-    // - apply the style
     bool success = true;
-	delete applystyle;
 	return success;
 }
 
 void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
 {
+    // TODO: do everything in run() or to share the selection
+    // between run() and applyStyle()
     qDebug() << style.name;
+
+	ApplyStyle *applystyle = new ApplyStyle(scribusDocument);
+
+    ScribusAPIDocumentItem* frame = scribusDocument->getCurrentItem();
+	if (frame &&  frame->isTextFrame())
+    {
+        frame->getText()->applyParagraphStyle(style.name);
+    }
 }

@@ -24,7 +24,8 @@ Scribus plugin for applying a style through a small in-place dialog.
 
 ## Todo
 
-- Apply the style when Enter is pressed.
+- get the cursor position on the screen
+- refresh the rendering of the frame and mark the document as dirty.
 - Get "h1" to match "Heading 1" and "dp" "Default Paragraph Style" (space is the delimiter)
 
 Further ideas:
