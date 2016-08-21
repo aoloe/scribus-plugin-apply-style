@@ -26,6 +26,8 @@ Scribus plugin for applying a style through a small in-place dialog.
 
 - get the cursor position on the screen
 - refresh the rendering of the frame and mark the document as dirty.
+- apply also the character styles.
+- move the `ApplyStyleDialogListItem` struct away from the dialog file.
 - Get "h1" to match "Heading 1" and "dp" "Default Paragraph Style" (space is the delimiter)
 
 Further ideas:

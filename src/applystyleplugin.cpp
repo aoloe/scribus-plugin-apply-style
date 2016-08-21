@@ -128,6 +128,7 @@ void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
     ScribusAPIDocumentItem* frame = scribusDocument->getCurrentItem();
 	if (frame &&  frame->isTextFrame())
     {
-        frame->getText()->applyParagraphStyle(style.name);
+        if (style.type == "paragraph")
+            frame->getText()->applyParagraphStyle(style.name);
     }
 }
