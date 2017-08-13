@@ -41,6 +41,11 @@ Further ideas:
 - avox says: "if you know the character position, you can use class TextLayout to find the relative position in the frame"
 - the code around line 1882 in `pageitem_textframe.cpp` could also be interesting
 - fuzzy autocomplete: <https://github.com/FuzzyAutocomplete/FuzzyAutocompletePlugin>
+  - https://packagecontrol.io/packages/AutocompletionFuzzy
+  - http://www.tomsquest.com/blog/2011/05/better-autocompletes-with-fuzzy-matching/
+  - https://en.wikipedia.org/wiki/Approximate_string_matching
+  - https://github.com/tomsquest/better-autocompletes-with-fuzzy-matching
+  - http://www.dustindiaz.com/autocomplete-fuzzy-matching
 - Maybe create a general runner:
   - Only a label, no lineedit
   - No mouse support (we might have a second one mouse based)

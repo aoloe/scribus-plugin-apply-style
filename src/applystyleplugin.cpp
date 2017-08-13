@@ -122,13 +122,17 @@ void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
     // TODO: do everything in run() or to share the selection
     // between run() and applyStyle()
     qDebug() << style.name;
+    qDebug() << style.type;
 
-	ApplyStyle *applystyle = new ApplyStyle(scribusDocument);
+    // TODO: remove the ApplyStyle class?
+	// ApplyStyle *applystyle = new ApplyStyle(scribusDocument);
 
     ScribusAPIDocumentItem* frame = scribusDocument->getCurrentItem();
 	if (frame &&  frame->isTextFrame())
     {
         if (style.type == "paragraph")
             frame->getText()->applyParagraphStyle(style.name);
+        else if (style.type == "character")
+            frame->getText()->applyCharacterStyle(style.name);
     }
 }
