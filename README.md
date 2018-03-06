@@ -2,9 +2,17 @@
 
 Scribus plugin for applying a style through a small in-place dialog.
 
-![Apply paragraph styles](assets/apply-h1-list.gif)
+Press `cltr-shift-space` to trigger the "Apply a style" dialog:
 
-![Apply character styles](assets/apply-code.gif)
+![Apply paragraph styles](assets/apply-h1-list.gif | width=400)
+
+Simply type the first letters of the style name and press the `Return` key.
+
+You can also apply character styles:
+
+![Apply character styles](assets/apply-code.gif | width=400)
+
+Take care, that at the time of writing, you should first select some text before being able to apply any charcter formatting.
 
 ## Features
 
@@ -43,7 +51,11 @@ to `CMakeList.txt` file in `scribus/plugins/`.
 
 `make` your Scribus.
 
+In `File > Preferences > Keyboard Shortcuts` set `Ctrl-Shift-Space` for the `Apply a Style` command.
+
 _Warning_: If you're compiler does not default to c++11, you will have to add `-DWANT_CPP11` to your cmake command.
+
+
 
 ## Todo
 
