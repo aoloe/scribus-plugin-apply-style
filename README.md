@@ -4,13 +4,14 @@ Scribus plugin for applying a style through a small in-place dialog.
 
 Press `cltr-shift-space` to trigger the "Apply a style" dialog:
 
-![Apply paragraph styles](assets/apply-h1-list.gif | width=400)
+<img src="assets/apply-h1-list.gif" width="400px" alt="Apply paragraph styles">
 
 Simply type the first letters of the style name and press the `Return` key.
 
 You can also apply character styles:
 
-![Apply character styles](assets/apply-code.gif | width=400)
+![](assets/apply-code.gif | width=400)
+<img src="assets/apply-code.gif" width="400px" alt="Apply a character style">
 
 Take care, that at the time of writing, you should first select some text before being able to apply any charcter formatting.
 
