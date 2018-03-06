@@ -1,9 +1,10 @@
+#ifndef APPLYSTYLE_H
+#define APPLYSTYLE_H
+
 /**
  * The main apply style class.
  * It gets called from the plugin class after the options have been set in the dialog
  */
-#ifndef APPLYSTYLE_H
-#define APPLYSTYLE_H
 
 #include <QObject>
 #include <QVector>

@@ -2,33 +2,55 @@
 
 Scribus plugin for applying a style through a small in-place dialog.
 
+![Apply paragraph styles](assets/apply-h1-list.gif)
+
+![Apply character styles](assets/apply-code.gif)
+
 ## Features
 
-### Planned
+The dialog is composed by:
+  - A text box for typing part of the styles name (spaces are ignored)
+  - A list showing the matching styles:
+    - the first style in alphabetical order is preselected.
+    - the currently matching style is marked as bold.
+    - paragraph styles are prefixed by a ¶, character styles by T.
+  - `Tab` moves to the next style in the list
+  - `Return` selects the first style in the list.
+  - `Esc` closes the dialog without applying the style.
+- No mouse interaction is possible (the policy will only be reivisde, if somebody can present a valid reason for using the mouse).
 
-- can only be launched through the menues (for discovaribility) and a shortcut.
-- if scribus is in edit mode, the dialog shows at the cursor position
-- otherwise, if a text frame is selected, shows at a yet to be defined position in the visible part of the text frame (or somewhere in the window)
-- the dialog is composed by:
-  - a text box (probably static) for typing a part of the styles name (spaces are ignored)
-  - a list showing the matching styles
-    - none before the first character has been typed
-    - define a maximum of styles to be shown
-    - a prefix number for selecting a style
-    - return selects the first style in the list
-    - ESC closes the dialog without applying the style
-- no mouse interaction is possible (except if somebody can present a valid use case for using the mouse)
-- show icons for each type of style.
+### Future plans
+
+- Can be launched through a shortcut and the menues (for discovaribility).
+- If scribus is in edit mode, the dialog shows at the cursor position. (The dialog is currently in the middle of the window)
+- Otherwise, if a text frame is selected, shows at a yet to be defined position in the visible part of the text frame (or somewhere in the window)
+- The list of matching styles should be empty if too many styles are matching.
+- Preselect the last style applied?
+- `Shift-Tab` should go backwards in the list.
+- Show icons for each type of style.
 - Support other types of styles as text styles.
 - allow to apply the style to multiple items of the same type.
+
+## Installing
+
+First make sure that you have the ScribusAPI plugin installed (https://github.com/aoloe/scribus-plugin-API).
+
+Clone the `scribus-plugin-export-plugin` repository and put – or symlink – its `src` directory into `scribus/plugins/` as `applystyle`. Then add 
+
+    ADD_SUBDIRECTORY(applyStyle)
+
+to `CMakeList.txt` file in `scribus/plugins/`.
+
+`make` your Scribus.
+
+_Warning_: If you're compiler does not default to c++11, you will have to add `-DWANT_CPP11` to your cmake command.
 
 ## Todo
 
 - get the cursor position on the screen
 - refresh the rendering of the frame and mark the document as dirty.
-- apply also the character styles.
 - move the `ApplyStyleDialogListItem` struct away from the dialog file.
-- Get "h1" to match "Heading 1" and "dp" "Default Paragraph Style" (space is the delimiter)
+- Get "h1" to match "Heading 1" and "dp" "Default Paragraph Style" (space is the delimiter, if there is no direct match)
 
 Further ideas:
 
