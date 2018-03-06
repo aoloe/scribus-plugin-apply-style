@@ -1,6 +1,8 @@
-# Apply a style
+# Scribus Plugin: Apply a style
 
 Scribus plugin for applying a style through a small in-place dialog.
+
+This plugin is an alternative to keyboard shortcuts for applying paragraph and character styles.
 
 Press `cltr-shift-space` to trigger the "Apply a style" dialog:
 
@@ -13,6 +15,8 @@ You can also apply character styles:
 <img src="assets/apply-code.gif" width="400px" alt="Apply a character style">
 
 Take care, that at the time of writing, you should first select some text before being able to apply any charcter formatting.
+
+This plugin is not in Scribus yet: you have to compile Scribus with this plugin if you want to use it.
 
 ## Features
 
