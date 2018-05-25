@@ -9,26 +9,27 @@
 #include <QObject>
 #include <QVector>
 
-#include "plugins/scribusAPI/scribusAPIDocument.h"
-class ApplyStyleSelection;
+#include "plugins/scribusAPI/document.h"
+
+namespace ApplyStyle
+{
+
+class Selection;
 
 /**
- * @brief The main apply style class. It gets called by `ApplyStylePlugin` after the the export dialog.
+ * @brief The main "Apply Style" class. It gets called by `ApplyStylePlugin` for showing the "Apply Style" dialog.
  */
-class ApplyStyle : public QObject
+class ApplyStyle
 {
-    Q_OBJECT
+    public:
+        ApplyStyle(ScribusAPI::Document &document)
+        : document{document}
+        {}
+        ~ApplyStyle() {}
+    private:
+        ScribusAPI::Document &document;
 
-public:
-	ApplyStyle(ScribusAPIDocument* document)
-    : document{document}
-    {}
-	~ApplyStyle() {}
-
-    ApplyStyleSelection* getSelection();
-private:
-    ScribusAPIDocument* document;
-
-};
+    };
+}
 
 #endif // APPLYSTYLE_H

@@ -4,14 +4,15 @@
 #include "scribuscore.h"
 #include "scribusdoc.h"
 
-#include <QDebug>
+#include <QString>
 
-#include "module/applystyleselection.h"
+#include <iostream>
+
 #include "ui/applystyledialog.h"
 
-#include "plugins/scribusAPI/scribusAPIDocument.h"
-#include "plugins/scribusAPI/scribusAPIDocumentItem.h"
-#include "plugins/scribusAPI/scribusAPIDocumentItemText.h"
+#include "plugins/scribusAPI/scribus.h"
+#include "plugins/scribusAPI/document.h"
+#include "plugins/scribusAPI/frameText.h"
 
 int applystyleplugin_getPluginAPIVersion()
 {
@@ -90,7 +91,39 @@ void ApplyStylePlugin::deleteAboutData(const AboutData* about) const
 bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
 {
 
+    // TODO: one day we will have to find out and document what target is good for...
     Q_ASSERT(target.isNull());
+
+
+    // TODO: why is doc passed to the plugin and when it is set (what is its value?)
+    document = ScribusAPI::Scribus::getActiveDocument(doc);
+    if (!document.isOpen()) {
+        return false;
+    }
+
+	auto applyStyle = ApplyStyle::ApplyStyle(document);
+
+    // TODO: add getActiveTextItem() ?
+    auto optionalDocumentItem = document.getActiveItem();
+    if (!optionalDocumentItem.has_value()) {
+        return false;
+    }
+
+    auto documentItem = optionalDocumentItem.value();
+
+    if (!documentItem.isTextFrame()) {
+        return false;
+    }
+
+    // TODO: convert the ApplyStyleDialog to use namespaces and non pointers.
+    ApplyStyleDialog* dialog = new ApplyStyleDialog{doc->scMW(), document};
+    connect(dialog, &ApplyStyleDialog::accepted, [this, dialog]() {
+          this->applyStyle(dialog->getStyle());
+    });
+    dialog->setModal(true);
+    dialog->show();
+
+    /*
     ScribusDoc* currDoc = doc;
     if (currDoc == 0)
         currDoc = ScCore->primaryMainWindow()->doc;
@@ -113,6 +146,7 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
         // we cannot use exec() because it does not autofocus on the edit field
         // dialog->exec();
     }
+    */
     bool success = true;
 	return success;
 }
@@ -121,18 +155,15 @@ void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
 {
     // TODO: do everything in run() or to share the selection
     // between run() and applyStyle()
-    qDebug() << style.name;
-    qDebug() << style.type;
+    std::cout << style.name << std::endl;
+    std::cout << style.type << std::endl;
 
-    // TODO: remove the ApplyStyle class?
-	// ApplyStyle *applystyle = new ApplyStyle(scribusDocument);
-
-    ScribusAPIDocumentItem* frame = scribusDocument->getCurrentItem();
-	if (frame &&  frame->isTextFrame())
-    {
-        if (style.type == "paragraph")
-            frame->getText()->applyParagraphStyle(style.name);
-        else if (style.type == "character")
-            frame->getText()->applyCharacterStyle(style.name);
+    auto frame = document.getActiveItem();
+	if (frame &&  frame->isTextFrame()) {
+        if (style.type == "paragraph") {
+            frame->getFrameText().applyParagraphStyle(style.name);
+        } else if (style.type == "character") {
+            frame->getFrameText().applyCharacterStyle(style.name);
+        }
     }
 }

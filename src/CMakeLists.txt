@@ -11,7 +11,6 @@ SET(SCRIBUS_APPLYSTYLE_PLUGIN_MOC_CLASSES
   applystyleplugin.h
   applystyle.h
   ui/applystyledialog.h
-  module/applystyleselection.h
 )
 
 SET(SCRIBUS_APPLYSTYLE_PLUGIN_SOURCES

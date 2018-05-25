@@ -9,7 +9,10 @@
 #include "pluginapi.h"
 #include "scplugin.h"
 
-class QString;
+#include "plugins/scribusAPI/document.h"
+
+#include <QString>
+
 class ScribusDoc;
 class ScribusMainWindow;
 
@@ -33,8 +36,8 @@ public:
 	\param filename a file to export to
 	\retval bool true
 	*/
-	virtual bool run(ScribusDoc* doc=0, QString filename = QString::null);
-	virtual const QString fullTrName() const;
+	virtual bool run(ScribusDoc* doc=0, QString filename = QString::null) override;
+	virtual const QString fullTrName() const override;
 	virtual const AboutData* getAboutData() const;
 	virtual void deleteAboutData(const AboutData* about) const;
 	virtual void languageChange();
@@ -43,7 +46,7 @@ public:
 private slots:
 	void applyStyle(ApplyStyleDialogListItem style);
 private:
-    ScribusAPIDocument* scribusDocument;
+    ScribusAPI::Document document;
 };
 
 extern "C" PLUGIN_API int applystyleplugin_getPluginAPIVersion();

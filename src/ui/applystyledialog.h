@@ -3,15 +3,19 @@
 
 #include<QObject>
 #include <QDialog>
+#include <QString>
+#include <QMainWindow>
 
-class QString;
-class ScribusAPIDocument;
+#include <vector>
+#include <string>
+
+namespace ScribusAPI { class Document; }
 
 struct ApplyStyleDialogListItem
 {
-    ApplyStyleDialogListItem(QString type, QString name): type{type}, name{name} {}
-    QString type; // todo: use a constant from APIDocumentStyle
-    QString name;
+    ApplyStyleDialogListItem(std::string type, std::string name): type{type}, name{name} {}
+    std::string type; // todo: use a constant from APIDocumentStyle
+    std::string name;
 };
 
 namespace Ui {
@@ -23,7 +27,7 @@ class ApplyStyleDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ApplyStyleDialog(QWidget *parent, ScribusAPIDocument* document);
+    explicit ApplyStyleDialog(QMainWindow *parent, ScribusAPI::Document& document);
     ~ApplyStyleDialog();
     ApplyStyleDialogListItem getStyle();
 
@@ -31,14 +35,14 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 private:
     Ui::ApplyStyleDialog *ui;
-    ScribusAPIDocument* document;
-    QList<ApplyStyleDialogListItem> styles;
-    QList<ApplyStyleDialogListItem> stylesSelected;
-    int currentStyleSelected = 0;
+    ScribusAPI::Document& document;
+    std::vector<ApplyStyleDialogListItem> styles;
+    std::vector<ApplyStyleDialogListItem> stylesSelected;
+    size_t currentStyleSelected = 0;
     // QStringList paragraphStyles;
     // QStringList characterStyles;
     void updateLabel();
-    QString getStylesFiltered(const QString filterText);
+    std::string getStylesFiltered(const std::string filterText);
 private slots:
     void updateLabel(const QString& inputText);
 };

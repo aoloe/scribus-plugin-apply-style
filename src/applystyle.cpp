@@ -3,13 +3,14 @@
 #include "applystyle.h"
 #include "scribusdoc.h"
 
-#include "module/applystyleselection.h"
+// #include "module/applystyleselection.h"
 
-#include "plugins/scribusAPI/scribusAPIDocument.h"
-#include "plugins/scribusAPI/scribusAPIDocumentItem.h"
-#include "plugins/scribusAPI/scribusAPIDocumentItemText.h"
+// #include "plugins/scribusAPI/scribusAPIDocument.h"
+// #include "plugins/scribusAPI/scribusAPIDocumentItem.h"
+// #include "plugins/scribusAPI/scribusAPIDocumentItemText.h"
 // #include "plugins/scribusAPI/scribusAPIDocumentItemTextFormatting.h"
 
+/*
 ApplyStyleSelection* ApplyStyle::getSelection()
 {
 	ScribusAPIDocumentItem* tocFrame = document->getCurrentItem();
@@ -21,3 +22,4 @@ ApplyStyleSelection* ApplyStyle::getSelection()
     // bool editMode;
     return selection;
 }
+*/

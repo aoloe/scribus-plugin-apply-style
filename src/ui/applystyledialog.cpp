@@ -7,24 +7,29 @@
 #include<QKeyEvent>
 #include<QStringList>
 #include<QString>
-#include<QRegularExpression>
+// #include<QRegularExpression>
 
-#include "plugins/scribusAPI/scribusAPIDocument.h"
+#include <vector>
+#include <string>
+#include <regex>
 
-ApplyStyleDialog::ApplyStyleDialog(QWidget *parent, ScribusAPIDocument* document) :
+#include "plugins/scribusAPI/utilsstring.h"
+#include "plugins/scribusAPI/document.h"
+
+ApplyStyleDialog::ApplyStyleDialog(QMainWindow *parent, ScribusAPI::Document& document) :
     QDialog(parent),
     ui(new Ui::ApplyStyleDialog),
     document(document)
 {
-    foreach (QString styleName, document->getParagraphStyleNames())
+    for (auto styleName: document.getParagraphStyleNames())
     {
-        styles.append(ApplyStyleDialogListItem("paragraph", styleName));
+        styles.push_back(ApplyStyleDialogListItem("paragraph", styleName));
     }
     // paragraphStyles = document->getParagraphStyleNames();
     // qDebug() << paragraphStyles;
-    foreach (QString styleName, document->getCharacterStyleNames())
+    for (auto styleName: document.getCharacterStyleNames())
     {
-        styles.append(ApplyStyleDialogListItem("character", styleName));
+        styles.push_back(ApplyStyleDialogListItem("character", styleName));
     }
     // characterStyles = document->getCharacterStyleNames();
     // qDebug() << characterStyles;
@@ -69,7 +74,7 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
                 return true;
             } else if (keyEvent->key() == Qt::Key_Tab) {
                 // qDebug() << "Tab key press" << keyEvent->key();
-                if (currentStyleSelected < styles.size() - 1)
+                if (currentStyleSelected <= styles.size())
                     ++currentStyleSelected;
                 else
                     currentStyleSelected = 0;
@@ -95,47 +100,69 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
-QString ApplyStyleDialog::getStylesFiltered(const QString filterText)
+std::string ApplyStyleDialog::getStylesFiltered(const std::string filterText)
 {
-    QStringList styleNamesSelected;
+    std::vector<std::string> styleNamesSelected;
     stylesSelected.clear();
-    QList<ApplyStyleDialogListItem> stylesNotSelected;
 
-    // todo: probably we have to escape filterText:
-    // QRegExp::escape(filterText);
-	QRegularExpression re(filterText, QRegularExpression::CaseInsensitiveOption);
+    std::regex pattern(filterText, std::regex::icase);
+    std::smatch match;
 
-    foreach (ApplyStyleDialogListItem style, styles)
-    {
-        QRegularExpressionMatch match = re.match(style.name);
-        if (match.hasMatch())
-            stylesSelected.append(style);
-        else
-            stylesNotSelected.append(style);
+    for (auto style: styles) {
+        std::regex_search(style.name, match, pattern);
+        if (!match.empty()) {
+            stylesSelected.push_back(style);
+        }
     }
 
-    // Find the word boundaries matching each letter in the filter
-	QRegularExpression reWords(filterText, QRegularExpression::CaseInsensitiveOption);
+    /*
+    // the algorithm way
+    std::regex pattern{filterText, std::regex::icase};
+    std::smatch match{};
+
+    std::copy_if(styles.begin(), styles.end(),
+        std::back_insterter(stylesSelected),
+        [&pattern, &match](std::string style) {
+            std::regex_search(style, match, pattern);
+            return !match.empty();
+        });
+    */
+
+    /*
+    // std::string.find way
+    // #include <algorithm>
+    std::transform(filterText.begin(), filterText.end(), filterText.begin(), std::tolower)
+
+    for (auto style: styles) {
+        std::string = styleName{};
+        std::transform(style.begin(), style.end(), styleName.begin(), std::tolower)
+        auto found = styleName.find(filterText)
+        if (found != std::string::npos) {
+            stylesSelected.push_back(style);
+        }
+    }
+    */
+
+
+    size_t i = 0;
+    for (auto style: stylesSelected) {
+        std::string item{style.name};
+        if (i == currentStyleSelected) {
+            item = "<b>"+item+"</b>";
+        }
+        item = (style.type == "paragraph" ? "¶ " : "T ") + item;
+        styleNamesSelected.push_back(item);
+        ++i;
+    }
+
+    // TODO: Find the word boundaries matching each letter in the filter
 
     // TODO: disable the apply button if no style selected
     // TODO: separate the creation of the string list from the selection of the styles
 
-    // TODO: sort alphabetically the stylesSelected
+    // TODO: sort the stylesSelected alphabetically
 
-    int i = 0;
-    foreach (ApplyStyleDialogListItem style, stylesSelected)
-    {
-        QString item;
-        item += style.name;
-        if (i == currentStyleSelected)
-            item = "<b>"+item+"</b>";
-        item = (style.type == "paragraph" ? "¶ " : "T ") + item;
-        styleNamesSelected.append(item);
-        stylesSelected.append(style);
-        ++i;
-    }
-
-    return styleNamesSelected.join(" ");
+    return ScribusAPI::String::join(styleNamesSelected.begin(), styleNamesSelected.end(), " ");
 }
 
 void ApplyStyleDialog::updateLabel()
@@ -145,5 +172,5 @@ void ApplyStyleDialog::updateLabel()
 
 void ApplyStyleDialog::updateLabel(const QString& inputText)
 {
-    ui->label->setText(getStylesFiltered(inputText));
+    ui->label->setText(QString::fromStdString(getStylesFiltered(inputText.toUtf8().constData())));
 }
