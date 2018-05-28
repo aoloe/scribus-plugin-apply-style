@@ -12,7 +12,7 @@
 
 #include "plugins/scribusAPI/scribus.h"
 #include "plugins/scribusAPI/document.h"
-#include "plugins/scribusAPI/frameText.h"
+#include "plugins/scribusAPI/textFrame.h"
 
 int applystyleplugin_getPluginAPIVersion()
 {
@@ -123,30 +123,6 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
     dialog->setModal(true);
     dialog->show();
 
-    /*
-    ScribusDoc* currDoc = doc;
-    if (currDoc == 0)
-        currDoc = ScCore->primaryMainWindow()->doc;
-    if (currDoc == 0)
-        return false;
-
-    scribusDocument = new ScribusAPIDocument(currDoc);
-
-	ApplyStyle *applystyle = new ApplyStyle(scribusDocument);
-
-    ApplyStyleSelection* selection = applystyle->getSelection();
-    if (selection->textFrame)
-    {
-        ApplyStyleDialog *dialog = new ApplyStyleDialog(currDoc->scMW(), scribusDocument);
-        connect(dialog, &ApplyStyleDialog::accepted, [this, dialog]() {
-              this->applyStyle(dialog->getStyle());
-        });
-        dialog->setModal(true);
-        dialog->show();
-        // we cannot use exec() because it does not autofocus on the edit field
-        // dialog->exec();
-    }
-    */
     bool success = true;
 	return success;
 }
@@ -161,9 +137,9 @@ void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
     auto frame = document.getActiveItem();
 	if (frame &&  frame->isTextFrame()) {
         if (style.type == "paragraph") {
-            frame->getFrameText().applyParagraphStyle(style.name);
+            frame->getTextFrame().applyParagraphStyle(style.name);
         } else if (style.type == "character") {
-            frame->getFrameText().applyCharacterStyle(style.name);
+            frame->getTextFrame().applyCharacterStyle(style.name);
         }
     }
 }
