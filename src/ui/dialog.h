@@ -11,33 +11,37 @@
 
 namespace ScribusAPI { class Document; }
 
-struct ApplyStyleDialogListItem
-{
-    ApplyStyleDialogListItem(std::string type, std::string name): type{type}, name{name} {}
-    std::string type; // todo: use a constant from APIDocumentStyle
-    std::string name;
-};
-
 namespace Ui {
 class ApplyStyleDialog;
 }
 
-class ApplyStyleDialog : public QDialog
+namespace ScribusPlugin {
+namespace ApplyStyle {
+
+struct ListItem
+{
+    ListItem(std::string type, std::string name): type{type}, name{name} {}
+    std::string type; // todo: use a constant from APIDocumentStyle
+    std::string name;
+};
+
+
+class Dialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ApplyStyleDialog(QMainWindow *parent, ScribusAPI::Document& document);
-    ~ApplyStyleDialog();
-    ApplyStyleDialogListItem getStyle();
+    explicit Dialog(QMainWindow *parent, ScribusAPI::Document& document);
+    ~Dialog();
+    ListItem getStyle();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 private:
     Ui::ApplyStyleDialog *ui;
     ScribusAPI::Document& document;
-    std::vector<ApplyStyleDialogListItem> styles;
-    std::vector<ApplyStyleDialogListItem> stylesSelected;
+    std::vector<ListItem> styles;
+    std::vector<ListItem> stylesSelected;
     size_t currentStyleSelected = 0;
     // QStringList paragraphStyles;
     // QStringList characterStyles;
@@ -46,5 +50,8 @@ private:
 private slots:
     void updateLabel(const QString& inputText);
 };
+
+} // ScribusPlugin::ApplyStyle
+}
 
 #endif // APPLYSTYLEDIALOG_H

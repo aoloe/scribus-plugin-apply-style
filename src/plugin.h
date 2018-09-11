@@ -16,20 +16,23 @@
 class ScribusDoc;
 class ScribusMainWindow;
 
-#include "ui/applystyledialog.h" // for ApplyStyleDialogListItem
+#include "ui/dialog.h" // for ApplyStyleDialogListItem
+
+namespace ScribusPlugin {
+namespace ApplyStyle {
 
 /**
  * This is the standard entry point for the plugin and is automatically loaded by Scribus.
  * @brief Standard entry point for the plugin; Attaches itself to the menu, shows the "Settings" dialog and calls `ApplyStyle::doInsert()`
  */
-class PLUGIN_API ApplyStylePlugin : public ScActionPlugin
+class PLUGIN_API Plugin : public ScActionPlugin
 {
 	Q_OBJECT
 public:
 
 	// Standard plugin implementation
-	ApplyStylePlugin();
-	virtual ~ApplyStylePlugin();
+	Plugin();
+	virtual ~Plugin();
 	/*!
 	\author Ale Rimoldi
 	\brief Run the Apply Style
@@ -44,10 +47,13 @@ public:
 	virtual void addToMainWindowMenu(ScribusMainWindow *) override {};
 
 private slots:
-	void applyStyle(ApplyStyleDialogListItem style);
+	void applyStyle(ListItem style);
 private:
     ScribusAPI::Document document;
 };
+
+} // namespaces
+}
 
 extern "C" PLUGIN_API int applystyleplugin_getPluginAPIVersion();
 extern "C" PLUGIN_API ScPlugin* applystyleplugin_getPlugin();

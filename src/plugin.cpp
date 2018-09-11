@@ -1,5 +1,4 @@
-#include "applystyle.h"
-#include "applystyleplugin.h"
+#include "plugin.h"
 
 #include "scribuscore.h"
 #include "scribusdoc.h"
@@ -8,7 +7,7 @@
 
 #include <iostream>
 
-#include "ui/applystyledialog.h"
+#include "ui/dialog.h"
 
 #include "plugins/scribusAPI/scribus.h"
 #include "plugins/scribusAPI/document.h"
@@ -21,35 +20,35 @@ int applystyleplugin_getPluginAPIVersion()
 
 ScPlugin* applystyleplugin_getPlugin()
 {
-	ApplyStylePlugin* plug = new ApplyStylePlugin();
+	auto plug = new ScribusPlugin::ApplyStyle::Plugin();
 	Q_CHECK_PTR(plug);
 	return plug;
 }
 
 void applystyleplugin_freePlugin(ScPlugin* plugin)
 {
-	ApplyStylePlugin* plug = dynamic_cast<ApplyStylePlugin*>(plugin);
+	auto plug = dynamic_cast<ScribusPlugin::ApplyStyle::Plugin*>(plugin);
 	Q_ASSERT(plug);
 	delete plug;
 }
 
-ApplyStylePlugin::ApplyStylePlugin() : ScActionPlugin()
+namespace ScribusPlugin {
+namespace ApplyStyle {
+
+Plugin::Plugin() : ScActionPlugin()
 {
 	// Set action info in languageChange, so we only have to do
 	// it in one place.
 	languageChange();
 }
 
-ApplyStylePlugin::~ApplyStylePlugin()
+Plugin::~Plugin()
 {
 	// unregisterAll();
 };
 
-void ApplyStylePlugin::languageChange()
+void Plugin::languageChange()
 {
-	// Note that we leave the unused members unset. They'll be initialised
-	// with their default ctors during construction.
-	// Action name
 	m_actionInfo.name = "ApplyStyle";
 	// Action text for menu, including accel
 	m_actionInfo.text = tr("Apply a &Style");
@@ -61,12 +60,12 @@ void ApplyStylePlugin::languageChange()
 	m_actionInfo.needsNumObjects = -1;
 }
 
-const QString ApplyStylePlugin::fullTrName() const
+const QString Plugin::fullTrName() const
 {
 	return QObject::tr("Apply Style");
 }
 
-const ScActionPlugin::AboutData* ApplyStylePlugin::getAboutData() const
+const ScActionPlugin::AboutData* Plugin::getAboutData() const
 {
 	AboutData* about = new AboutData;
 	about->authors = "Ale Rimoldi <a.l.e@ideale.ch>";
@@ -77,7 +76,7 @@ const ScActionPlugin::AboutData* ApplyStylePlugin::getAboutData() const
 	return about;
 }
 
-void ApplyStylePlugin::deleteAboutData(const AboutData* about) const
+void Plugin::deleteAboutData(const AboutData* about) const
 {
 	Q_ASSERT(about);
 	delete about;
@@ -88,20 +87,19 @@ void ApplyStylePlugin::deleteAboutData(const AboutData* about) const
  *
  * If a document is open, check if a text frame is selected, call the style picker and apply the chosen style.
  */
-bool ApplyStylePlugin::run(ScribusDoc* doc, const QString& target)
+bool Plugin::run(ScribusDoc* doc, const QString& target)
 {
 
     // TODO: one day we will have to find out and document what target is good for...
     Q_ASSERT(target.isNull());
 
 
-    // TODO: why is doc passed to the plugin and when it is set (what is its value?)
+    // TODO: why is doc passed to the plugin and when is it set (what is its value?)
+    // TODO: rename ScribusAPI to ScribusPlugin::API
     document = ScribusAPI::Scribus::getActiveDocument(doc);
     if (!document.isOpen()) {
         return false;
     }
-
-	auto applyStyle = ApplyStyle::ApplyStyle(document);
 
     // TODO: add getActiveTextItem() ?
     auto optionalDocumentItem = document.getActiveItem();
@@ -116,8 +114,8 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, const QString& target)
     }
 
     // TODO: convert the ApplyStyleDialog to use namespaces and non pointers.
-    ApplyStyleDialog* dialog = new ApplyStyleDialog{doc->scMW(), document};
-    connect(dialog, &ApplyStyleDialog::accepted, [this, dialog]() {
+    auto dialog = new Dialog{doc->scMW(), document};
+    connect(dialog, &Dialog::accepted, [this, dialog]() {
           this->applyStyle(dialog->getStyle());
     });
     dialog->setModal(true);
@@ -127,7 +125,7 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, const QString& target)
 	return success;
 }
 
-void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
+void Plugin::applyStyle(ListItem style)
 {
     auto frame = document.getActiveItem();
 	if (frame &&  frame->isTextFrame()) {
@@ -137,4 +135,7 @@ void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
             frame->getTextFrame().applyCharacterStyle(style.name);
         }
     }
+}
+
+} // namespaces
 }

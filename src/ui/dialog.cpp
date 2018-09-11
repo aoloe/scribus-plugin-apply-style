@@ -1,4 +1,4 @@
-#include "applystyledialog.h"
+#include "dialog.h"
 #include "ui_applystyledialog.h"
 
 #include<QObject>
@@ -16,47 +16,44 @@
 #include "plugins/scribusAPI/utilsstring.h"
 #include "plugins/scribusAPI/document.h"
 
-ApplyStyleDialog::ApplyStyleDialog(QMainWindow *parent, ScribusAPI::Document& document) :
+namespace ScribusPlugin {
+namespace ApplyStyle {
+
+Dialog::Dialog(QMainWindow *parent, ScribusAPI::Document& document) :
     QDialog(parent),
     ui(new Ui::ApplyStyleDialog),
     document(document)
 {
-    for (auto styleName: document.getParagraphStyleNames())
-    {
-        styles.push_back(ApplyStyleDialogListItem("paragraph", styleName));
+    for (auto styleName: document.getParagraphStyleNames()) {
+        styles.push_back(ListItem("paragraph", styleName));
     }
-    // paragraphStyles = document->getParagraphStyleNames();
-    // qDebug() << paragraphStyles;
-    for (auto styleName: document.getCharacterStyleNames())
-    {
-        styles.push_back(ApplyStyleDialogListItem("character", styleName));
+    for (auto styleName: document.getCharacterStyleNames()) {
+        styles.push_back(ListItem("character", styleName));
     }
-    // characterStyles = document->getCharacterStyleNames();
-    // qDebug() << characterStyles;
 
     ui->setupUi(this);
 
     updateLabel();
 	ui->lineEdit->installEventFilter(this);
 	installEventFilter(this);
-    connect(ui->lineEdit, &QLineEdit::textChanged, this, static_cast<void (ApplyStyleDialog::*)(const QString &)>(&ApplyStyleDialog::updateLabel));
+    connect(ui->lineEdit, &QLineEdit::textChanged, this, static_cast<void (Dialog::*)(const QString &)>(&Dialog::updateLabel));
 
 }
 
-ApplyStyleDialog::~ApplyStyleDialog()
+Dialog::~Dialog()
 {
     delete ui;
 }
 
-ApplyStyleDialogListItem ApplyStyleDialog::getStyle()
+ListItem Dialog::getStyle()
 {
-    return (stylesSelected.size() > 0 ? stylesSelected.at(currentStyleSelected) : ApplyStyleDialogListItem("", ""));
+    return (stylesSelected.size() > 0 ? stylesSelected.at(currentStyleSelected) : ListItem("", ""));
 }
 
 /**
  * @brief capture return, esc, and tab and mouse clicks
  */
-bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
+bool Dialog::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui->lineEdit) {
         if (event->type() == QEvent::KeyPress) {
@@ -100,7 +97,7 @@ bool ApplyStyleDialog::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
-std::string ApplyStyleDialog::getStylesFiltered(const std::string filterText)
+std::string Dialog::getStylesFiltered(const std::string filterText)
 {
     std::vector<std::string> styleNamesSelected;
     stylesSelected.clear();
@@ -143,7 +140,6 @@ std::string ApplyStyleDialog::getStylesFiltered(const std::string filterText)
     }
     */
 
-
     size_t i = 0;
     for (auto style: stylesSelected) {
         std::string item{style.name};
@@ -165,12 +161,15 @@ std::string ApplyStyleDialog::getStylesFiltered(const std::string filterText)
     return ScribusAPI::String::join(styleNamesSelected.begin(), styleNamesSelected.end(), " ");
 }
 
-void ApplyStyleDialog::updateLabel()
+void Dialog::updateLabel()
 {
     updateLabel(ui->lineEdit->text());
 }
 
-void ApplyStyleDialog::updateLabel(const QString& inputText)
+void Dialog::updateLabel(const QString& inputText)
 {
     ui->label->setText(QString::fromStdString(getStylesFiltered(inputText.toUtf8().constData())));
+}
+
+} // ScribusPlugin::ApplyStyle
 }

@@ -11,10 +11,8 @@
 
 #include "plugins/scribusAPI/document.h"
 
-namespace ApplyStyle
-{
-
-class Selection;
+namespace ScribusPlugin {
+namespace ApplyStyle {
 
 /**
  * @brief The main "Apply Style" class. It gets called by `ApplyStylePlugin` for showing the "Apply Style" dialog.
@@ -29,7 +27,9 @@ class ApplyStyle
     private:
         ScribusAPI::Document &document;
 
-    };
+};
+
+} // namespaces
 }
 
 #endif // APPLYSTYLE_H
