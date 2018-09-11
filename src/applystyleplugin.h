@@ -36,12 +36,12 @@ public:
 	\param filename a file to export to
 	\retval bool true
 	*/
-	virtual bool run(ScribusDoc* doc=0, QString filename = QString::null) override;
+	virtual bool run(ScribusDoc* doc, const QString& filename = QString::null) override;
 	virtual const QString fullTrName() const override;
-	virtual const AboutData* getAboutData() const;
-	virtual void deleteAboutData(const AboutData* about) const;
-	virtual void languageChange();
-	virtual void addToMainWindowMenu(ScribusMainWindow *) {};
+	virtual const AboutData* getAboutData() const override;
+	virtual void deleteAboutData(const AboutData* about) const override;
+	virtual void languageChange() override;
+	virtual void addToMainWindowMenu(ScribusMainWindow *) override {};
 
 private slots:
 	void applyStyle(ApplyStyleDialogListItem style);

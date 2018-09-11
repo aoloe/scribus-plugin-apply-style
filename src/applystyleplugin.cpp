@@ -88,7 +88,7 @@ void ApplyStylePlugin::deleteAboutData(const AboutData* about) const
  *
  * If a document is open, check if a text frame is selected, call the style picker and apply the chosen style.
  */
-bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
+bool ApplyStylePlugin::run(ScribusDoc* doc, const QString& target)
 {
 
     // TODO: one day we will have to find out and document what target is good for...
@@ -129,11 +129,6 @@ bool ApplyStylePlugin::run(ScribusDoc* doc, QString target)
 
 void ApplyStylePlugin::applyStyle(ApplyStyleDialogListItem style)
 {
-    // TODO: do everything in run() or to share the selection
-    // between run() and applyStyle()
-    std::cout << style.name << std::endl;
-    std::cout << style.type << std::endl;
-
     auto frame = document.getActiveItem();
 	if (frame &&  frame->isTextFrame()) {
         if (style.type == "paragraph") {
