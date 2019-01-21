@@ -51,7 +51,7 @@ Clone the `scribus-plugin-export-plugin` repository and put – or symlink – i
 
     ADD_SUBDIRECTORY(applyStyle)
 
-to `CMakeList.txt` file in `scribus/plugins/`.
+to `CMakeLists.txt` file in `scribus/plugins/`.
 
 `make` your Scribus.
 
