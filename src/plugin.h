@@ -49,7 +49,7 @@ public:
 private slots:
 	void applyStyle(ListItem style);
 private:
-    ScribusAPI::Document document;
+    API::Document document;
 };
 
 } // namespaces

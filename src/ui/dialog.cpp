@@ -19,7 +19,7 @@
 namespace ScribusPlugin {
 namespace ApplyStyle {
 
-Dialog::Dialog(QMainWindow *parent, ScribusAPI::Document& document) :
+Dialog::Dialog(QMainWindow *parent, API::Document& document) :
     QDialog(parent),
     ui(new Ui::ApplyStyleDialog),
     document(document)
@@ -158,7 +158,7 @@ std::string Dialog::getStylesFiltered(const std::string filterText)
 
     // TODO: sort the stylesSelected alphabetically
 
-    return ScribusAPI::String::join(styleNamesSelected.begin(), styleNamesSelected.end(), " ");
+    return API::String::join(styleNamesSelected.begin(), styleNamesSelected.end(), " ");
 }
 
 void Dialog::updateLabel()

@@ -5,8 +5,6 @@
 
 #include <QString>
 
-#include <iostream>
-
 #include "ui/dialog.h"
 
 #include "plugins/scribusAPI/scribus.h"
@@ -56,6 +54,7 @@ void Plugin::languageChange()
     // TODO: move it to edit (does not seem to appear)
 	// m_actionInfo.menu = "Edit";
 	m_actionInfo.menu = "Insert";
+	m_actionInfo.keySequence = "Ctrl+ ";
 	m_actionInfo.enabledOnStartup = false;
 	m_actionInfo.needsNumObjects = -1;
 }
@@ -96,7 +95,7 @@ bool Plugin::run(ScribusDoc* doc, const QString& target)
 
     // TODO: why is doc passed to the plugin and when is it set (what is its value?)
     // TODO: rename ScribusAPI to ScribusPlugin::API
-    document = ScribusAPI::Scribus::getActiveDocument(doc);
+    document = API::Scribus::getActiveDocument(doc);
     if (!document.isOpen()) {
         return false;
     }
