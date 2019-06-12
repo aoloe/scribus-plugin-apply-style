@@ -91,50 +91,50 @@ void Plugin::deleteAboutData(const AboutData* about) const
 bool Plugin::run(ScribusDoc* doc, const QString& target)
 {
 
-    // TODO: one day we will have to find out and document what target is good for...
-    Q_ASSERT(target.isNull());
+	// TODO: one day we will have to find out and document what target is good for...
+	Q_ASSERT(target.isNull());
 
 
-    // TODO: why is doc passed to the plugin and when is it set (what is its value?)
+	// TODO: why is doc passed to the plugin and when is it set (what is its value?)
 	document = ::API::Document::getActive();
-    if (!document->isOpen()) {
-        return false;
-    }
+	if (!document->isOpen()) {
+		return false;
+	}
 
-    // TODO: add getActiveTextItem() ?
-    // auto optionalDocumentItem = document.getActiveItem();
-    // if (!optionalDocumentItem.has_value()) {
-    //     return false;
-    // }
+	// TODO: add getActiveTextItem() ?
+	// auto optionalDocumentItem = document.getActiveItem();
+	// if (!optionalDocumentItem.has_value()) {
+	//     return false;
+	// }
 
-    // auto documentItem = optionalDocumentItem.value();
+	// auto documentItem = optionalDocumentItem.value();
 
-    // if (!documentItem.isTextFrame()) {
-    //     return false;
-    // }
+	// if (!documentItem.isTextFrame()) {
+	//     return false;
+	// }
 
-    // TODO: convert the ApplyStyleDialog to use namespaces and non pointers.
-    auto dialog = new Dialog{doc->scMW(), document};
-    connect(dialog, &Dialog::accepted, [this, dialog]() {
+	// TODO: convert the ApplyStyleDialog to use namespaces and non pointers.
+	auto dialog = new Dialog{doc->scMW(), document};
+	connect(dialog, &Dialog::accepted, [this, dialog]() {
 		this->applyStyle(dialog->getStyle());
-    });
-    dialog->setModal(true);
-    dialog->show();
+		});
+	dialog->setModal(true);
+	dialog->show();
 
-    bool success = true;
+	bool success = true;
 	return success;
 }
 
 void Plugin::applyStyle(ListItem style)
 {
-    // auto frame = document.getActiveItem();
+	// auto frame = document.getActiveItem();
 	// if (frame &&  frame->isTextFrame()) {
-    //     if (style.type == "paragraph") {
-    //         frame->getTextFrame().applyParagraphStyle(style.name);
-    //     } else if (style.type == "character") {
-    //         frame->getTextFrame().applyCharacterStyle(style.name);
-    //     }
-    // }
+	//     if (style.type == "paragraph") {
+	//         frame->getTextFrame().applyParagraphStyle(style.name);
+	//     } else if (style.type == "character") {
+	//         frame->getTextFrame().applyCharacterStyle(style.name);
+	//     }
+	// }
 }
 
 } // namespaces
