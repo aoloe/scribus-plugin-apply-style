@@ -8,8 +8,9 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
-namespace ScribusPlugin{ namespace API { class Document; }}
+namespace API { class Document; }
 
 namespace Ui {
 class ApplyStyleDialog;
@@ -31,7 +32,7 @@ class Dialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit Dialog(QMainWindow *parent, API::Document& document);
+    explicit Dialog(QMainWindow *parent, std::shared_ptr<::API::Document> document);
     ~Dialog();
     ListItem getStyle();
 
@@ -39,7 +40,7 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 private:
     Ui::ApplyStyleDialog *ui;
-    API::Document& document;
+    std::shared_ptr<API::Document> document;
     std::vector<ListItem> styles;
     std::vector<ListItem> stylesSelected;
     size_t currentStyleSelected = 0;

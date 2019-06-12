@@ -9,9 +9,11 @@
 #include "pluginapi.h"
 #include "scplugin.h"
 
-#include "plugins/scribusAPI/document.h"
+// #include "plugins/scribusAPI/document.h"
+#include "api/document.h"
 
 #include <QString>
+#include <memory>
 
 class ScribusDoc;
 class ScribusMainWindow;
@@ -49,7 +51,7 @@ public:
 private slots:
 	void applyStyle(ListItem style);
 private:
-    API::Document document;
+    std::shared_ptr<API::Document> document;
 };
 
 } // namespaces
