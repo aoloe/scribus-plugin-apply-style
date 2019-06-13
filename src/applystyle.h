@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QVector>
 
-#include "plugins/scribusAPI/document.h"
+// #include "plugins/scribusAPI/document.h"
 
 namespace ScribusPlugin {
 namespace ApplyStyle {

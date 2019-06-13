@@ -13,43 +13,41 @@
 #include <string>
 #include <regex>
 
-#include "plugins/scribusAPI/utilsstring.h"
-#include "plugins/scribusAPI/document.h"
+#include "api/utilsstring.h"
+#include "api/document.h"
 
 namespace ScribusPlugin {
 namespace ApplyStyle {
 
 Dialog::Dialog(QMainWindow *parent, std::shared_ptr<::API::Document> document) :
-    QDialog(parent),
-    ui(new Ui::ApplyStyleDialog),
-    document{document}
+	QDialog(parent),
+	ui(new Ui::ApplyStyleDialog),
+	document{document}
 {
-	/*
-    for (auto styleName: document.getParagraphStyleNames()) {
-        styles.push_back(ListItem("paragraph", styleName));
-    }
-    for (auto styleName: document.getCharacterStyleNames()) {
-        styles.push_back(ListItem("character", styleName));
-    }
+	for (auto styleName: document->getParagraphStyleNames()) {
+		styles.push_back(ListItem("paragraph", styleName));
+	}
+	for (auto styleName: document->getCharacterStyleNames()) {
+		styles.push_back(ListItem("character", styleName));
+	}
 
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    updateLabel();
+	updateLabel();
 	ui->lineEdit->installEventFilter(this);
 	installEventFilter(this);
-    connect(ui->lineEdit, &QLineEdit::textChanged, this, static_cast<void (Dialog::*)(const QString &)>(&Dialog::updateLabel));
-	*/
+	connect(ui->lineEdit, &QLineEdit::textChanged, this, static_cast<void (Dialog::*)(const QString &)>(&Dialog::updateLabel));
 
 }
 
 Dialog::~Dialog()
 {
-    delete ui;
+	delete ui;
 }
 
 ListItem Dialog::getStyle()
 {
-    return (stylesSelected.size() > 0 ? stylesSelected.at(currentStyleSelected) : ListItem("", ""));
+	return (stylesSelected.size() > 0 ? stylesSelected.at(currentStyleSelected) : ListItem("", ""));
 }
 
 /**
@@ -57,62 +55,62 @@ ListItem Dialog::getStyle()
  */
 bool Dialog::eventFilter(QObject *obj, QEvent *event)
 {
-    // if (obj == ui->lineEdit) {
-    //     if (event->type() == QEvent::KeyPress) {
-    //         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-    //         if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
-    //             if (styles.size() > 0)
-    //             {
-    //                 this->accept();
-    //                 return true;
-    //             } else {
-    //                 return false;
-    //             }
-    //         } else if (keyEvent->key() == Qt::Key_Escape) {
-    //             this->reject();
-    //             return true;
-    //         } else if (keyEvent->key() == Qt::Key_Tab) {
-    //             // qDebug() << "Tab key press" << keyEvent->key();
-    //             if (currentStyleSelected <= styles.size())
-    //                 ++currentStyleSelected;
-    //             else
-    //                 currentStyleSelected = 0;
-    //             updateLabel();
-    //             return true;
-    //         } else {
-    //             /*
-    //             qDebug() << "A key press" << keyEvent->key();
-    //             qDebug() << "A key press" << keyEvent->text();
-    //             */
-    //             currentStyleSelected = 0;
-    //             return false;
-    //         }
-	// 	} else {
-    //         return false;
-    //     }
-    // } else if (obj == this) {
-    //     if (event->type() == QEvent::MouseButtonRelease) {
-	// 		this->reject();
-    //         return true;
-    //     }
-    // }
-    return false;
+	if (obj == ui->lineEdit) {
+		if (event->type() == QEvent::KeyPress) {
+			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
+				if (styles.size() > 0)
+				{
+					this->accept();
+					return true;
+				} else {
+					return false;
+				}
+			} else if (keyEvent->key() == Qt::Key_Escape) {
+				this->reject();
+				return true;
+			} else if (keyEvent->key() == Qt::Key_Tab) {
+				// qDebug() << "Tab key press" << keyEvent->key();
+				if (currentStyleSelected <= styles.size())
+					++currentStyleSelected;
+				else
+					currentStyleSelected = 0;
+				updateLabel();
+				return true;
+			} else {
+				/*
+				   qDebug() << "A key press" << keyEvent->key();
+				   qDebug() << "A key press" << keyEvent->text();
+				 */
+				currentStyleSelected = 0;
+				return false;
+			}
+		} else {
+			return false;
+		}
+	} else if (obj == this) {
+		if (event->type() == QEvent::MouseButtonRelease) {
+			this->reject();
+			return true;
+		}
+	}
+	return false;
 }
 
 std::string Dialog::getStylesFiltered(const std::string filterText)
 {
-    // std::vector<std::string> styleNamesSelected;
-    // stylesSelected.clear();
+	std::vector<std::string> styleNamesSelected;
+	stylesSelected.clear();
 
-    // std::regex pattern(filterText, std::regex::icase);
-    // std::smatch match;
+	std::regex pattern(filterText, std::regex::icase);
+	std::smatch match;
 
-    // for (auto style: styles) {
-    //     std::regex_search(style.name, match, pattern);
-    //     if (!match.empty()) {
-    //         stylesSelected.push_back(style);
-    //     }
-    // }
+	for (auto style: styles) {
+		std::regex_search(style.name, match, pattern);
+		if (!match.empty()) {
+			stylesSelected.push_back(style);
+		}
+	}
 
     /*
     // the algorithm way
@@ -142,36 +140,35 @@ std::string Dialog::getStylesFiltered(const std::string filterText)
     }
     */
 
-    // size_t i = 0;
-    // for (auto style: stylesSelected) {
-    //     std::string item{style.name};
-    //     if (i == currentStyleSelected) {
-    //         item = "<b>"+item+"</b>";
-    //     }
-    //     item = (style.type == "paragraph" ? "¶ " : "T ") + item;
-    //     styleNamesSelected.push_back(item);
-    //     ++i;
-    // }
+	size_t i = 0;
+	for (auto style: stylesSelected) {
+		std::string item{style.name};
+		if (i == currentStyleSelected) {
+			item = "<b>"+item+"</b>";
+		}
+		item = (style.type == "paragraph" ? "¶ " : "T ") + item;
+		styleNamesSelected.push_back(item);
+		++i;
+	}
 
-    // TODO: Find the word boundaries matching each letter in the filter
+	// TODO: Find the word boundaries matching each letter in the filter
 
-    // TODO: disable the apply button if no style selected
-    // TODO: separate the creation of the string list from the selection of the styles
+	// TODO: disable the apply button if no style selected
+	// TODO: separate the creation of the string list from the selection of the styles
 
-    // TODO: sort the stylesSelected alphabetically
+	// TODO: sort the stylesSelected alphabetically
 
-    // return API::String::join(styleNamesSelected.begin(), styleNamesSelected.end(), " ");
-	return "";
+	return API::String::join(styleNamesSelected.begin(), styleNamesSelected.end(), " ");
 }
 
 void Dialog::updateLabel()
 {
-    // updateLabel(ui->lineEdit->text());
+	updateLabel(ui->lineEdit->text());
 }
 
 void Dialog::updateLabel(const QString& inputText)
 {
-    // ui->label->setText(QString::fromStdString(getStylesFiltered(inputText.toUtf8().constData())));
+	ui->label->setText(QString::fromStdString(getStylesFiltered(inputText.toUtf8().constData())));
 }
 
 } // ScribusPlugin::ApplyStyle

@@ -96,22 +96,23 @@ bool Plugin::run(ScribusDoc* doc, const QString& target)
 
 
 	// TODO: why is doc passed to the plugin and when is it set (what is its value?)
-	document = ::API::Document::getActive();
+	// document = ::API::Document::getActive();
+	auto document = std::make_shared<::API::Document>(doc);
 	if (!document->isOpen()) {
 		return false;
 	}
 
 	// TODO: add getActiveTextItem() ?
-	// auto optionalDocumentItem = document.getActiveItem();
-	// if (!optionalDocumentItem.has_value()) {
-	//     return false;
-	// }
+	auto optionalDocumentItem = document->getActiveItem();
+	if (!optionalDocumentItem.has_value()) {
+		return false;
+	}
 
-	// auto documentItem = optionalDocumentItem.value();
+	auto documentItem = optionalDocumentItem.value();
 
-	// if (!documentItem.isTextFrame()) {
-	//     return false;
-	// }
+	if (!documentItem.isTextFrame()) {
+		return false;
+	}
 
 	// TODO: convert the ApplyStyleDialog to use namespaces and non pointers.
 	auto dialog = new Dialog{doc->scMW(), document};
