@@ -4,14 +4,11 @@
 #include "scribusdoc.h"
 
 #include "api/item.h"
+#include "api/textframe.h"
 
 #include <QString>
 
 #include "ui/dialog.h"
-
-// #include "plugins/scribusAPI/scribus.h"
-// #include "plugins/scribusAPI/document.h"
-// #include "plugins/scribusAPI/textFrame.h"
 
 int applystyleplugin_getPluginAPIVersion()
 {
@@ -93,32 +90,25 @@ bool Plugin::run(ScribusDoc* doc, const QString& target)
 
 	// TODO: one day we will have to find out and document what target is good for...
 	Q_ASSERT(target.isNull());
-
-
 	// TODO: why is doc passed to the plugin and when is it set (what is its value?)
-	// document = ::API::Document::getActive();
-	auto document = std::make_shared<::API::Document>(doc);
-	if (!document->isOpen()) {
+
+	document = ::API::Document::getActive();
+	// auto document = std::make_shared<::API::Document>(doc);
+	if (document == nullptr) {
 		return false;
 	}
 
 	// TODO: add getActiveTextItem() ?
-	auto optionalDocumentItem = document->getActiveItem();
-	if (!optionalDocumentItem.has_value()) {
+	auto activeItem = document->getActiveItem();
+	if (activeItem == nullptr)
 		return false;
-	}
 
-	auto documentItem = optionalDocumentItem.value();
-
-	if (!documentItem.isTextFrame()) {
+	if (!activeItem->isTextFrame())
 		return false;
-	}
 
-	// TODO: convert the ApplyStyleDialog to use namespaces and non pointers.
 	auto dialog = new Dialog{doc->scMW(), document};
 	connect(dialog, &Dialog::accepted, [this, dialog]() {
-		this->applyStyle(dialog->getStyle());
-		});
+		this->applyStyle(dialog->getStyle());});
 	dialog->setModal(true);
 	dialog->show();
 
@@ -128,14 +118,22 @@ bool Plugin::run(ScribusDoc* doc, const QString& target)
 
 void Plugin::applyStyle(ListItem style)
 {
-	// auto frame = document.getActiveItem();
-	// if (frame &&  frame->isTextFrame()) {
-	//     if (style.type == "paragraph") {
-	//         frame->getTextFrame().applyParagraphStyle(style.name);
-	//     } else if (style.type == "character") {
-	//         frame->getTextFrame().applyCharacterStyle(style.name);
-	//     }
-	// }
+	if (document == nullptr)
+		return;
+
+	auto activeItem = document->getActiveItem();
+	if (activeItem == nullptr)
+		return;
+
+	auto textFrame = ::API::TextFrame::getFromItem(activeItem);
+	if (textFrame == nullptr)
+		return;
+
+	if (style.type == "paragraph") {
+		textFrame->applyParagraphStyle(style.name);
+	} else if (style.type == "character") {
+		textFrame->applyCharacterStyle(style.name);
+	}
 }
 
 } // namespaces
