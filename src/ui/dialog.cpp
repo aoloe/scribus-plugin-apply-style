@@ -13,8 +13,8 @@
 #include <string>
 #include <regex>
 
-#include "api/utilsstring.h"
-#include "api/document.h"
+#include "pluginapi/utilsstring.h"
+#include "pluginapi/document.h"
 
 namespace ScribusPlugin {
 namespace ApplyStyle {

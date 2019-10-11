@@ -10,7 +10,7 @@
 #include "scplugin.h"
 
 // #include "plugins/scribusAPI/document.h"
-#include "api/document.h"
+#include "pluginapi/document.h"
 
 #include <QString>
 #include <memory>
