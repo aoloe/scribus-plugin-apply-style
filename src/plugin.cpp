@@ -3,8 +3,9 @@
 #include "scribuscore.h"
 #include "scribusdoc.h"
 
-#include "pluginapi/item.h"
-#include "pluginapi/textframe.h"
+#include "api/document.h"
+#include "api/item.h"
+#include "api/textframe.h"
 
 #include <QString>
 

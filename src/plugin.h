@@ -9,9 +9,6 @@
 #include "pluginapi.h"
 #include "scplugin.h"
 
-// #include "plugins/scribusAPI/document.h"
-#include "pluginapi/document.h"
-
 #include <QString>
 #include <memory>
 
@@ -19,6 +16,10 @@ class ScribusDoc;
 class ScribusMainWindow;
 
 #include "ui/dialog.h" // for ApplyStyleDialogListItem
+
+namespace API {
+	class Document;
+}
 
 namespace ScribusPlugin {
 namespace ApplyStyle {
