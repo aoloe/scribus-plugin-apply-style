@@ -92,8 +92,9 @@ bool Plugin::run(ScribusDoc* doc, const QString& target)
 	Q_ASSERT(target.isNull());
 	// TODO: why is doc passed to the plugin and when is it set (what is its value?)
 
-	document = API::Document::getActive();
-	// auto document = std::make_shared<::API::Document>(doc);
+	document = ::API::Document::getActive();
+	// document = API::Document().getActive();
+	// document = std::make_shared<::API::Document>(doc);
 	if (document == nullptr) {
 		return false;
 	}
